@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Arrow Game</title>
+    <title>Arrow Rush</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -13,7 +13,9 @@
           <p class="eyebrow">Reaction challenge</p>
           <h1>Arrow Rush</h1>
         </div>
-        <button id="start-btn" class="primary-btn">Start game</button>
+        <div class="header-actions">
+          <button id="start-btn" class="primary-btn">Start game</button>
+        </div>
       </header>
 
       <main class="game-panel">
@@ -37,8 +39,8 @@
         </section>
 
         <section class="arena">
-          <p class="status" id="status">Press start to begin.</p>
-          <div id="target" class="target-arrow" aria-live="polite">↑</div>
+          <p class="status" id="status">Choose a difficulty and begin.</p>
+          <div id="target" class="target-arrow" aria-live="polite">✦</div>
         </section>
 
         <section class="controls" aria-label="Arrow controls">
@@ -48,6 +50,32 @@
           <button class="arrow-btn" data-key="ArrowRight" aria-label="Right arrow">→</button>
         </section>
       </main>
+    </div>
+
+    <div id="start-overlay" class="overlay visible" role="dialog" aria-modal="true" aria-labelledby="overlay-title">
+      <div class="overlay-card">
+        <p class="overlay-kicker">Arcade reaction test</p>
+        <h2 id="overlay-title">Arrow Rush</h2>
+        <p>Match the arrow before time runs out. Correct answers build streaks and score multipliers.</p>
+
+        <div class="difficulty-selector" aria-label="Game difficulty">
+          <button class="difficulty-btn active" data-difficulty="normal">Normal</button>
+          <button class="difficulty-btn" data-difficulty="easy">Easy</button>
+          <button class="difficulty-btn" data-difficulty="hard">Hard</button>
+        </div>
+
+        <button id="overlay-start-btn" class="primary-btn large">Play now</button>
+      </div>
+    </div>
+
+    <div id="game-over-overlay" class="overlay" role="dialog" aria-modal="true" aria-labelledby="game-over-title">
+      <div class="overlay-card">
+        <p class="overlay-kicker">Round complete</p>
+        <h2 id="game-over-title">Game over</h2>
+        <p id="final-score-text">Final score: 0</p>
+        <p id="best-score-text">Best score: 0</p>
+        <button id="restart-btn" class="primary-btn large">Play again</button>
+      </div>
     </div>
 
     <script src="script.js"></script>
