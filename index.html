@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Arrow Game</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Reaction challenge</p>
+          <h1>Arrow Rush</h1>
+        </div>
+        <button id="start-btn" class="primary-btn">Start game</button>
+      </header>
+
+      <main class="game-panel">
+        <section class="hud">
+          <div class="stat-box">
+            <span>Score</span>
+            <strong id="score">0</strong>
+          </div>
+          <div class="stat-box">
+            <span>Time</span>
+            <strong id="time">60</strong>
+          </div>
+          <div class="stat-box">
+            <span>Streak</span>
+            <strong id="streak">0</strong>
+          </div>
+          <div class="stat-box">
+            <span>Lives</span>
+            <strong id="lives">3</strong>
+          </div>
+        </section>
+
+        <section class="arena">
+          <p class="status" id="status">Press start to begin.</p>
+          <div id="target" class="target-arrow" aria-live="polite">↑</div>
+        </section>
+
+        <section class="controls" aria-label="Arrow controls">
+          <button class="arrow-btn" data-key="ArrowUp" aria-label="Up arrow">↑</button>
+          <button class="arrow-btn" data-key="ArrowLeft" aria-label="Left arrow">←</button>
+          <button class="arrow-btn" data-key="ArrowDown" aria-label="Down arrow">↓</button>
+          <button class="arrow-btn" data-key="ArrowRight" aria-label="Right arrow">→</button>
+        </section>
+      </main>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
