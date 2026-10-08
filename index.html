@@ -13,9 +13,7 @@
           <p class="eyebrow">Reaction challenge</p>
           <h1>Arrow Rush</h1>
         </div>
-        <div class="header-actions">
-          <button id="start-btn" class="primary-btn">Start game</button>
-        </div>
+        <button id="start-btn" class="primary-btn">Start game</button>
       </header>
 
       <main class="game-panel">
@@ -29,7 +27,7 @@
             <strong id="time">60</strong>
           </div>
           <div class="stat-box">
-            <span>Streak</span>
+            <span>Combo</span>
             <strong id="streak">0</strong>
           </div>
           <div class="stat-box">
@@ -41,6 +39,7 @@
         <section class="arena">
           <p class="status" id="status">Choose a difficulty and begin.</p>
           <div id="target" class="target-arrow" aria-live="polite">✦</div>
+          <div id="combo-burst" class="combo-burst">+0</div>
         </section>
 
         <section class="controls" aria-label="Arrow controls">
@@ -52,11 +51,16 @@
       </main>
     </div>
 
-    <div id="start-overlay" class="overlay visible" role="dialog" aria-modal="true" aria-labelledby="overlay-title">
+    <div id="start-overlay" class="overlay visible" role="dialog" aria-modal="true">
       <div class="overlay-card">
         <p class="overlay-kicker">Arcade reaction test</p>
-        <h2 id="overlay-title">Arrow Rush</h2>
-        <p>Match the arrow before time runs out. Correct answers build streaks and score multipliers.</p>
+        <h2>Arrow Rush</h2>
+        <p>Match the arrow before time runs out. Each correct hit builds your combo and boosts your score.</p>
+
+        <label class="name-field" for="player-name">
+          <span>Player name</span>
+          <input id="player-name" type="text" maxlength="12" value="Player" />
+        </label>
 
         <div class="difficulty-selector" aria-label="Game difficulty">
           <button class="difficulty-btn active" data-difficulty="normal">Normal</button>
@@ -68,12 +72,18 @@
       </div>
     </div>
 
-    <div id="game-over-overlay" class="overlay" role="dialog" aria-modal="true" aria-labelledby="game-over-title">
+    <div id="game-over-overlay" class="overlay" role="dialog" aria-modal="true">
       <div class="overlay-card">
         <p class="overlay-kicker">Round complete</p>
-        <h2 id="game-over-title">Game over</h2>
+        <h2>Game over</h2>
         <p id="final-score-text">Final score: 0</p>
         <p id="best-score-text">Best score: 0</p>
+
+        <div class="leaderboard-wrap">
+          <h3>Top scores</h3>
+          <ol id="leaderboard" class="leaderboard"></ol>
+        </div>
+
         <button id="restart-btn" class="primary-btn large">Play again</button>
       </div>
     </div>

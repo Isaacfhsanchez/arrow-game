@@ -18,6 +18,7 @@ const streakEl = document.getElementById("streak");
 const livesEl = document.getElementById("lives");
 const stateEl = document.getElementById("status");
 const targetEl = document.getElementById("target");
+const comboBurstEl = document.getElementById("combo-burst");
 const startBtn = document.getElementById("start-btn");
 const overlayStartBtn = document.getElementById("overlay-start-btn");
 const restartBtn = document.getElementById("restart-btn");
@@ -25,9 +26,12 @@ const startOverlay = document.getElementById("start-overlay");
 const gameOverOverlay = document.getElementById("game-over-overlay");
 const finalScoreText = document.getElementById("final-score-text");
 const bestScoreText = document.getElementById("best-score-text");
+const leaderboardEl = document.getElementById("leaderboard");
+const playerNameInput = document.getElementById("player-name");
 const difficultyButtons = [...document.querySelectorAll(".difficulty-btn")];
 const arrowButtons = [...document.querySelectorAll(".arrow-btn")];
 
+const leaderboardKey = "arrow-rush-leaderboard-v1";
 let score = 0;
 let timer = 60;
 let streak = 0;
@@ -40,11 +44,9 @@ let highScore = Number(localStorage.getItem("arrow-rush-high-score") || 0);
 let audioCtx = null;
 
 function ensureAudio() {
-  if (!audioCtx) {
-    const AudioConstructor = window.AudioContext || window.webkitAudioContext;
-    if (AudioConstructor) {
-      audioCtx = new AudioConstructor();
-    }
+  const AudioConstructor = window.AudioContext || window.webkitAudioContext;
+  if (!audioCtx && AudioConstructor) {
+    audioCtx = new AudioConstructor();
   }
 }
 
@@ -68,11 +70,19 @@ function playTone(frequency, type = "triangle", duration = 0.12, volume = 0.05) 
   oscillator.stop(audioCtx.currentTime + duration);
 }
 
+function showComboBurst(amount) {
+  comboBurstEl.textContent = `+${amount}`;
+  comboBurstEl.classList.add("visible");
+  clearTimeout(showComboBurst.timerId);
+  showComboBurst.timerId = setTimeout(() => {
+    comboBurstEl.classList.remove("visible");
+  }, 260);
+}
+
 function setDifficulty(difficulty) {
   activeDifficulty = difficulty;
   difficultyButtons.forEach((button) => {
-    const isActive = button.dataset.difficulty === difficulty;
-    button.classList.toggle("active", isActive);
+    button.classList.toggle("active", button.dataset.difficulty === difficulty);
   });
 }
 
@@ -100,6 +110,40 @@ function chooseNewArrow() {
   targetEl.textContent = arrowMap[next];
 }
 
+function getLeaderboard() {
+  try {
+    return JSON.parse(localStorage.getItem(leaderboardKey)) || [];
+  } catch {
+    return [];
+  }
+}
+
+function renderLeaderboard() {
+  const leaderboard = getLeaderboard();
+  leaderboardEl.innerHTML = "";
+
+  if (!leaderboard.length) {
+    leaderboardEl.innerHTML = "<li><span>Empty</span><span>0</span></li>";
+    return;
+  }
+
+  leaderboard.slice(0, 5).forEach((entry) => {
+    const li = document.createElement("li");
+    li.innerHTML = `<span>${entry.name}</span><span>${entry.score}</span>`;
+    leaderboardEl.appendChild(li);
+  });
+}
+
+function saveScoreToLeaderboard(finalScore) {
+  const name = (playerNameInput.value || "Player").trim().slice(0, 12) || "Player";
+  const leaderboard = getLeaderboard();
+  leaderboard.push({ name, score: finalScore });
+  leaderboard.sort((a, b) => b.score - a.score);
+  const trimmed = leaderboard.slice(0, 5);
+  localStorage.setItem(leaderboardKey, JSON.stringify(trimmed));
+  renderLeaderboard();
+}
+
 function handleAnswer(key) {
   if (!gameRunning) {
     return;
@@ -117,7 +161,8 @@ function handleAnswer(key) {
     streak += 1;
     flashTarget("good");
     playTone(660, "triangle", 0.08, 0.04);
-    setStatus("Nice! Keep the streak alive.");
+    showComboBurst(streak);
+    setStatus(`Nice! Combo x${streak}.`);
 
     if (score > highScore) {
       highScore = score;
@@ -127,8 +172,8 @@ function handleAnswer(key) {
     streak = 0;
     lives -= 1;
     flashTarget("bad");
-    playTone(220, "sawtooth", 0.11, 0.05);
-    setStatus(`Wrong key! You were looking for ${arrowMap[currentArrow]}.`);
+    playTone(220, "sawtooth", 0.13, 0.05);
+    setStatus(`Wrong key! Looking for ${arrowMap[currentArrow]}.`);
 
     if (lives <= 0) {
       endGame();
@@ -149,6 +194,7 @@ function startGame() {
   gameRunning = true;
   updateHud();
   setStatus(`Difficulty: ${activeDifficulty.toUpperCase()}. Match the arrows!`);
+  comboBurstEl.classList.remove("visible");
   chooseNewArrow();
   startOverlay.classList.remove("visible");
   gameOverOverlay.classList.remove("visible");
@@ -172,6 +218,7 @@ function endGame() {
   clearInterval(countdownInterval);
   countdownInterval = null;
   localStorage.setItem("arrow-rush-high-score", String(highScore));
+  saveScoreToLeaderboard(score);
   finalScoreText.textContent = `Final score: ${score}`;
   bestScoreText.textContent = `Best score: ${highScore}`;
   gameOverOverlay.classList.add("visible");
@@ -215,6 +262,7 @@ arrowButtons.forEach((button) => {
 });
 
 setDifficulty(activeDifficulty);
+renderLeaderboard();
 updateHud();
 setStatus("Choose a difficulty and begin.");
 chooseNewArrow();
